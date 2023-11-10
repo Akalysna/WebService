@@ -71,10 +71,40 @@ export default {
       })
     })
   },
+
   updateFilm(body, id) {
 
+    return new Promise((resolve, reject) => {
 
+      /**Requête SQL */
+      let query = "UPDATE `films` SET `title`= ?,`description`= ?,`release_date`= ?,`note`= ? WHERE `id_film`= ?"
 
+      /**Paramètres de la requête */
+      const params = [
+        body.title ?? '',
+        body.description ?? '',
+        body.release_date ?? new Date().toISOString(),
+        body.note ?? 0,
+        id
+      ];
+
+      connection.query(query, params, (err, results) => {
+
+        //Retour de la nouvelle valeur du film
+        if (!err){
+
+          this.getSingleFilm(id).then((result) => {
+            resolve(result)
+            
+          }).catch((err) => {
+            reject(err)
+          })
+        }
+
+        else
+          reject(err)
+      })
+    })
   },
 
 
@@ -83,19 +113,19 @@ export default {
     return new Promise((resolve, reject) => {
 
       //Vérifier que le body possède au moins une clé
-      if(!body){
+      if (!body) {
         reject(404)
       }
 
       /**Requête MQL */
       let query = "UPDATE `films` SET "
 
-      /**Tableau des paramètres de la requête */
+      /**Paramètres de la requête */
       let params = []
 
       // La requête est construite en bouclant sur les clées du body, puisqu'elles sont égale au champs de la table
       Object.keys(body).forEach(key => {
-        if(key == "id_film") {
+        if (key == "id_film") {
           return;
         }
         params.push(value)
@@ -126,11 +156,34 @@ export default {
 
       })
     })
-    
+
   },
 
 
-  deleteFilm(body) {
+  deleteFilm(id) {
+    return new Promise((resolve, reject) => {
 
+      let query = "DELETE FROM `films` WHERE `id_film` = ?"
+      let params = [id]
+
+      let res = ""
+
+      this.getSingleFilm(id).then(results => {
+
+        res = results
+
+        connection.query(query, params, (err, results) => {
+
+          if (!err) {
+            resolve(res)
+          } else {
+            reject(err)
+          }
+        })
+
+      }).catch(err => {
+        reject(err)
+      })
+    })
   }
 }

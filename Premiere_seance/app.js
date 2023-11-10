@@ -83,7 +83,14 @@ app.post('/films', upload.fields([]), (req, res) => {
 })
 
 app.put('/films/:id', upload.fields([]), (req, res) => {
-  // ecrase un film
+  services.updateFilm(req.body, req.params.id)
+  .then(results => {
+    res.status(200).json(results)
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).send('Une Erreur est survenue')
+  })
 })
 
 app.patch('/films/:id', upload.fields([]), (req, res) => {
@@ -99,7 +106,14 @@ app.patch('/films/:id', upload.fields([]), (req, res) => {
 })
 
 app.delete('/films/:id', upload.fields([]), (req, res) => {
-  // supprime un film
+  services.deleteFilm(req.params.id)
+  .then(results => {
+    res.status(200).json(results)
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).send('Une Erreur est survenue')
+  })
 })
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));
