@@ -3,7 +3,9 @@ import express from 'express';
 const app = express();
 import services from './services.js';
 import cors from 'cors';
+import multer from 'multer';
 app.use(cors());
+const upload = multer()
 import path from 'path'
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -40,7 +42,7 @@ let options = {
 expressSwagger(options)
 
 app.get('/', (req, res) => {
-    res.send('Hellooooooooooooooooo')
+  res.send('Hello World!')
 })
 
 /**
@@ -49,26 +51,45 @@ app.get('/', (req, res) => {
  * @group Film - Opération à propos des films
  */
 app.get('/films', (req, res) => {
-  // query tous les films
+  services.getEveryFilms().then(results => {
+    res.send(results)
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).send('Une Erreur est survenue')
+  })
 })
 
 app.get('/films/:id', (req, res) => {
   // query le film d'id :id
+  services.getSingleFilm(req.params.id).then(results => {
+    res.send(results)
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).send('Une Erreur est survenue')
+  })
 })
 
-app.post('/films', (req, res) => {
+app.post('/films', upload.fields([]), (req, res) => {
   // ajoute un film
+  services.insertFilm(req.body).then(results => {
+    res.status(201).json(results)
+  })
+  .catch(err => {
+    console.log(err)
+  })
 })
 
-app.put('/films/:id', (req, res) => {
+app.put('/films/:id', upload.fields([]), (req, res) => {
   // ecrase un film
 })
 
-app.patch('/films/:id', (req, res) => {
+app.patch('/films/:id', upload.fields([]), (req, res) => {
   // corrige un champ d'un film
 })
 
-app.delete('/films/:id', (req, res) => {
+app.delete('/films/:id', upload.fields([]), (req, res) => {
   // supprime un film
 })
 
