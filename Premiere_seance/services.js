@@ -9,15 +9,15 @@ const connection = mysql.createConnection({
 
 export default {
 
-    /**
-     * 
-     * @returns 
-     */
-  getEveryFilms () {
+  /**
+   * 
+   * @returns 
+   */
+  getEveryFilms() {
     return new Promise((resolve, reject) => {
       const query = "SELECT * FROM films;";
       connection.query(query, (err, results) => {
-        if(!err) {
+        if (!err) {
           resolve(results);
         }
         else {
@@ -30,7 +30,7 @@ export default {
     return new Promise((resolve, reject) => {
       const query = "SELECT * FROM films WHERE id_film = ?;";
       connection.query(query, [id], (err, results) => {
-        if(!err) {
+        if (!err) {
           resolve(results[0]);
         }
         else {
@@ -49,16 +49,16 @@ export default {
         body.note ?? 0
       ];
       connection.query(query, params, (err, results) => {
-        if(!err) {
+        if (!err) {
           query = "SELECT LAST_INSERT_id() as id;";
           connection.query(query, (err, results) => {
-            if(!err) {
+            if (!err) {
               this.getSingleFilm(results[0].id).then(results => {
                 resolve(results)
               })
-              .catch(err => {
-                console.error(err)
-              })
+                .catch(err => {
+                  console.error(err)
+                })
             }
             else {
               reject(err);
@@ -73,11 +73,63 @@ export default {
   },
   updateFilm(body, id) {
 
+
+
   },
+
+
   patchFilm(body, id) {
+    return new Promise((resolve, reject) => {
+
+      //Vérifier que le body possède au moins une clé
+      if(!body){
+        reject(404)
+      }
+
+      /**Requête MQL */
+      let query = "UPDATE `films` SET "
+
+      /**Tableau des paramètres de la requête */
+      let params = []
+
+      // La requête est construite en bouclant sur les clées du body, puisqu'elles sont égale au champs de la table
+      Object.keys(body).forEach(key => {
+        if(key == "id_film") {
+          return;
+        }
+        params.push(value)
+        query += `${key}=?, `
+      })
+
+      //Suppression de la virgule en trop et complétion de la requête
+      query = query.slice(0, query.length - 2)
+      query += " WHERE `id_film` = ?"
+      params.push(id) //Ajout de l'id du film
+
+      //Récupération du résultat de la requête
+      connection.query(query, params, (err, results) => {
+
+        //S'il n'y a pas d'erreur renvoyer le film en question
+        if (!err) {
+
+          this.getSingleFilm(id).then(results => {
+            resolve(results)
+
+          }).catch(err => {
+            reject(err)
+          })
+
+        } else {
+          reject(err)
+        }
+
+      })
+    })
     
   },
-  deleteFilm(body, id) {
+
+
+  deleteFilm(body) {
 
   }
 }
