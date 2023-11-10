@@ -46,13 +46,14 @@ app.get('/', (req, res) => {
 })
 
 /**
- * Cette fonction retourne la liste des films de la base de données
- * @route GET /api
+ * Cette route retourne la liste des films de la base de données
+ * @route GET /films
  * @group Film - Opération à propos des films
+ * @returns Liste des films
  */
 app.get('/films', (req, res) => {
   services.getEveryFilms().then(results => {
-    res.send(results)
+    res.status(200).json(results)
   })
   .catch(err => {
     console.error(err)
@@ -60,6 +61,13 @@ app.get('/films', (req, res) => {
   })
 })
 
+/**
+ * Cette route retourne un film selon l'id spécifié
+ * @route GET /films/:id
+ * @param {int} id Id du film a récupérer
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du films
+ */
 app.get('/films/:id', (req, res) => {
   // query le film d'id :id
   services.getSingleFilm(req.params.id).then(results => {
@@ -71,6 +79,16 @@ app.get('/films/:id', (req, res) => {
   })
 })
 
+/**
+ * Cette route insère un film avec les données fournies
+ * @route POST /films
+ * @param {string} title titre de film
+ * @param {string} description Id du film a récupérer
+ * @param {string} release_date Id du film a récupérer
+ * @param {int} note Id du film a récupérer
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du films
+ */
 app.post('/films', upload.fields([]), (req, res) => {
   // ajoute un film
   services.insertFilm(req.body).then(results => {
@@ -100,6 +118,14 @@ app.patch('/films/:id', upload.fields([]), (req, res) => {
 
 app.delete('/films/:id', upload.fields([]), (req, res) => {
   // supprime un film
+  services.deleteFilm(req.body, req.params.id)
+  .then(results => {
+    res.status(200).json(results);
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).send('Une Erreur est survenue')
+  })
 })
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));

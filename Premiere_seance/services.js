@@ -75,33 +75,7 @@ export default {
 
   },
   patchFilm(body, id) {
-    return new Promise((resolve, reject) => {
-      let query = "UPDATE films SET ";
-      let params = [];
-      Object.keys(body).forEach(key => {
-        if(key == "id_film") {
-          return;
-        }
-        query += key+"=? ";
-        params.push(body[key]);
-      })
-      query += "WHERE id_film = ?;";
-      params.push(id)
-      connection.query(query, params, (err, results) => {
-        if(!err) {
-          this.getSingleFilm(id).then(results => {
-            resolve(results)
-          })
-          .catch(err => {
-            console.error(err)
-          })
-        }
-        else {
-          reject(err)
-        }
-      })
-
-    })
+    
   },
   deleteFilm(body, id) {
 
