@@ -6,11 +6,50 @@ import cors from 'cors';
 import multer from 'multer';
 app.use(cors());
 const upload = multer()
+import path from 'path'
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import ES from 'express-swagger-generator'
+const expressSwagger= ES(app);
+let options = {
+    swaggerDefinition: {
+        info: {
+            description: 'Devoir Ynov WebService',
+            title: 'Webservice de film',
+            version: '1.0.0',
+        },
+        host: 'localhost:3000',
+        basePath: '/v1',
+        produces: [
+            "application/json",
+            "application/xml"
+        ],
+        schemes: ['http', 'https'],
+        securityDefinitions: {
+            JWT: {
+                type: 'apiKey',
+                in: 'header',
+                name: 'Authorization',
+                description: "",
+            }
+        }
+    },
+    basedir: __dirname, //app absolute path
+    files: ['./*.js'] //Path to the API handle folder
+};
+expressSwagger(options)
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+/**
+ * Cette fonction retourne la liste des films de la base de données
+ * @route GET /api
+ * @group Film - Opération à propos des films
+ */
 app.get('/films', (req, res) => {
   services.getEveryFilms().then(results => {
     res.send(results)
@@ -53,8 +92,5 @@ app.patch('/films/:id', upload.fields([]), (req, res) => {
 app.delete('/films/:id', upload.fields([]), (req, res) => {
   // supprime un film
 })
-
-
-
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));
