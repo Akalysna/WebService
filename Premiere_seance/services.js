@@ -109,7 +109,6 @@ export default {
 
 
   patchFilm(body, id) {
-
     return new Promise((resolve, reject) => {
 
       //Vérifier que le body possède au moins une clé
