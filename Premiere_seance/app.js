@@ -1,19 +1,36 @@
 //Définition des routes
-const express = require('express');
+import express from 'express';
 const app = express();
-const mysql = require('mysql2');
-const cors = require('cors');
+import services from './services.js';
+import cors from 'cors';
 app.use(cors());
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'gaumont_pathe'
-});
-
 app.get('/', (req, res) => {
-  res.send('hello world');
+
+})
+
+app.get('/films', (req, res) => {
+  // query tous les films
+})
+
+app.get('/films/:id', (req, res) => {
+  // query le film d'id :id
+})
+
+app.post('/films', (req, res) => {
+  // ajoute un film
+})
+
+app.put('/films/:id', (req, res) => {
+  // ecrase un film
+})
+
+app.patch('/films/:id', (req, res) => {
+  // corrige un champ d'un film
+})
+
+app.delete('/films/:id', (req, res) => {
+  // supprime un film
 })
 
 
