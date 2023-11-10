@@ -78,6 +78,7 @@ app.post('/films', upload.fields([]), (req, res) => {
   })
   .catch(err => {
     console.log(err)
+    res.status(500).send('Une Erreur est survenue')
   })
 })
 
@@ -87,6 +88,14 @@ app.put('/films/:id', upload.fields([]), (req, res) => {
 
 app.patch('/films/:id', upload.fields([]), (req, res) => {
   // corrige un champ d'un film
+  services.patchFilm(req.body, req.params.id)
+  .then(results => {
+    res.status(200).json(results)
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).send('Une Erreur est survenue')
+  })
 })
 
 app.delete('/films/:id', upload.fields([]), (req, res) => {
