@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
 
 export default {
   getEveryFilms () {
-    return new Promise((reject, resolve) => {
+    return new Promise((resolve, reject) => {
       const query = "SELECT * FROM films;";
       connection.query(query, (err, results) => {
         if(!err) {
@@ -20,5 +20,59 @@ export default {
         }
       })
     })
+  },
+  getSingleFilm(id) {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM films WHERE id_film = ?;";
+      connection.query(query, [id], (err, results) => {
+        if(!err) {
+          resolve(results[0]);
+        }
+        else {
+          reject(err);
+        }
+      })
+    })
+  },
+  insertFilm(body) {
+    return new Promise((resolve, reject) => {
+      let query = "INSERT INTO `films`(`title`, `description`, `release_date`, `note`) VALUES (?,?,?,?)";
+      const params = [
+        body.title ?? '',
+        body.description ?? '',
+        body.release_date ?? new Date().toISOString(),
+        body.note ?? 0
+      ];
+      connection.query(query, params, (err, results) => {
+        if(!err) {
+          query = "SELECT LAST_INSERT_id() as id;";
+          connection.query(query, (err, results) => {
+            if(!err) {
+              this.getSingleFilm(results[0].id).then(results => {
+                resolve(results)
+              })
+              .catch(err => {
+                console.error(err)
+              })
+            }
+            else {
+              reject(err);
+            }
+          })
+        }
+        else {
+          reject(err);
+        }
+      })
+    })
+  },
+  updateFilm(body) {
+    
+  },
+  patchFilm(body) {
+
+  },
+  deleteFilm(body) {
+
   }
 }
