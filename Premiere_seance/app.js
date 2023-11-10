@@ -43,9 +43,9 @@ let options = {
 };
 expressSwagger(options)
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// app.get('/', (req, res) => {
+//   res.status(404)
+// })
 
 /**
  * Cette route retourne la liste des films de la base de données
@@ -61,7 +61,7 @@ app.get('/films', (req, res) => {
   .catch(err => {
     console.error(err)
     res.header('Content-Type', 'text/html')
-    res.status(422).send('Une Erreur est survenue')
+    res.status(404).send('Une Erreur est survenue')
   })
 })
 

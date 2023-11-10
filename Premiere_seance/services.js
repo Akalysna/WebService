@@ -19,7 +19,10 @@ export default {
           resolve(results);
         }
         else {
-          reject(err);
+          reject({
+            status : 422,
+            err : err
+          });
         }
       })
     })
@@ -33,7 +36,10 @@ export default {
           resolve(results[0]);
         }
         else {
-          reject(err);
+          reject({
+            status : 422,
+            err : err
+          });
         }
       })
     })
@@ -50,6 +56,8 @@ export default {
       ];
       connection.query(query, params, (err, results) => {
         if (!err) {
+
+          //Récupération de l'id du dernier film inséré
           query = "SELECT LAST_INSERT_id() as id;";
           connection.query(query, (err, results) => {
             if (!err) {
@@ -61,12 +69,18 @@ export default {
                 })
             }
             else {
-              reject(err);
+              reject({
+                status : 422,
+                err : err
+              });
             }
           })
         }
         else {
-          reject(err);
+          reject({
+            status : 422,
+            err : err
+          });
         }
       })
     })
@@ -97,12 +111,18 @@ export default {
             resolve(result)
             
           }).catch((err) => {
-            reject(err)
+            reject({
+              status : 422,
+              err : err
+            })
           })
         }
 
         else
-          reject(err)
+          reject({
+            status : 422,
+            err : err
+          })
       })
     })
   },
@@ -110,9 +130,12 @@ export default {
   patchFilm(body, id) {
     return new Promise((resolve, reject) => {
 
-      //Vérifier que le body possède au moins une clé
+      //Vérifier que le body est défini
       if(!body){
-        reject(422)
+        reject({
+          status : 422,
+          err : "Le body est undefined. Veuillez remplir les champs et relancer la requête"
+        })
       }
 
       /**Requête MQL */
@@ -126,7 +149,7 @@ export default {
         if (key == "id_film") {
           return;
         }
-        params.push(value)
+        params.push(body[key])
         query += `${key}=?, `
       })
 
@@ -142,11 +165,18 @@ export default {
         if (!err) {
           this.getSingleFilm(id).then(results => {
             resolve(results)
-          }).catch(err => {
-            reject(err)
+
+          }).catch(err => { 
+            reject({
+              status : 422,
+              err : err
+            })
           })
         } else {
-          reject(err)
+          reject({
+            status : 422,
+            err : err
+          })
         }
       })
     })
@@ -169,12 +199,18 @@ export default {
           if (!err) {
             resolve(res)
           } else {
-            reject(err)
+            reject({
+              status : 422,
+              err : err
+            })
           }
         })
 
       }).catch(err => {
-        reject(err)
+        reject({
+          status : 422,
+          err : err
+        })
       })
     })
   }
