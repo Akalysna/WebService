@@ -8,6 +8,11 @@ const connection = mysql.createConnection({
 });
 
 export default {
+
+    /**
+     * 
+     * @returns 
+     */
   getEveryFilms () {
     return new Promise((reject, resolve) => {
       const query = "SELECT * FROM films;";
