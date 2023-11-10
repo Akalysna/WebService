@@ -8,11 +8,6 @@ const connection = mysql.createConnection({
 });
 
 export default {
-
-  /**
-   * 
-   * @returns 
-   */
   getEveryFilms() {
     return new Promise((resolve, reject) => {
       const query = "SELECT * FROM films;";
@@ -26,6 +21,7 @@ export default {
       })
     })
   },
+
   getSingleFilm(id) {
     return new Promise((resolve, reject) => {
       const query = "SELECT * FROM films WHERE id_film = ?;";
@@ -39,6 +35,7 @@ export default {
       })
     })
   },
+
   insertFilm(body) {
     return new Promise((resolve, reject) => {
       let query = "INSERT INTO `films`(`title`, `description`, `release_date`, `note`) VALUES (?,?,?,?)";
@@ -107,13 +104,12 @@ export default {
     })
   },
 
-
   patchFilm(body, id) {
     return new Promise((resolve, reject) => {
 
       //Vérifier que le body possède au moins une clé
-      if (!body) {
-        reject(404)
+      if(!body){
+        reject(422)
       }
 
       /**Requête MQL */
@@ -141,24 +137,18 @@ export default {
 
         //S'il n'y a pas d'erreur renvoyer le film en question
         if (!err) {
-
           this.getSingleFilm(id).then(results => {
             resolve(results)
-
           }).catch(err => {
             reject(err)
           })
-
         } else {
           reject(err)
         }
-
       })
     })
-
   },
-
-
+  
   deleteFilm(id) {
     return new Promise((resolve, reject) => {
 

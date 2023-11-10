@@ -53,11 +53,13 @@ app.get('/', (req, res) => {
  */
 app.get('/films', (req, res) => {
   services.getEveryFilms().then(results => {
+    res.header('Content-Type', 'application/json')
     res.status(200).json(results)
   })
   .catch(err => {
     console.error(err)
-    res.status(500).send('Une Erreur est survenue')
+    res.header('Content-Type', 'text/html')
+    res.status(422).send('Une Erreur est survenue')
   })
 })
 
@@ -71,11 +73,18 @@ app.get('/films', (req, res) => {
 app.get('/films/:id', (req, res) => {
   // query le film d'id :id
   services.getSingleFilm(req.params.id).then(results => {
-    res.send(results)
+    if(results == {}) {
+      res.sendStatus(404)
+    }
+    else {
+      res.header('Content-Type', 'application/json')
+      res.status(200).json(results)
+    }
   })
   .catch(err => {
     console.error(err)
-    res.status(500).send('Une Erreur est survenue')
+    res.header('Content-Type', 'text/html')
+    res.status(422).send('Une Erreur est survenue')
   })
 })
 
@@ -92,11 +101,13 @@ app.get('/films/:id', (req, res) => {
 app.post('/films', upload.fields([]), (req, res) => {
   // ajoute un film
   services.insertFilm(req.body).then(results => {
+    res.header('Content-Type', 'application/json')
     res.status(201).json(results)
   })
   .catch(err => {
     console.log(err)
-    res.status(500).send('Une Erreur est survenue')
+    res.header('Content-Type', 'text/html')
+    res.status(422).send('Une Erreur est survenue')
   })
 })
 
@@ -112,6 +123,7 @@ app.post('/films', upload.fields([]), (req, res) => {
  * @returns Objet contenant les détails du film écrasé
  */
 app.put('/films/:id', upload.fields([]), (req, res) => {
+  // ecrase un film
   services.updateFilm(req.body, req.params.id)
   .then(results => {
     res.status(200).json(results)
@@ -122,15 +134,28 @@ app.put('/films/:id', upload.fields([]), (req, res) => {
   })
 })
 
+/**
+ * Cette route corrige un film avec les données fournies
+ * @route PATCH /films/:id
+ * @param {int} id Id du film a corriger
+ * @param {string} title Optionnel - Nouveau titre du film
+ * @param {string} description Optionnel - Nouvelle Description du film
+ * @param {string} release_date Optionnel - Nouvelle date de parution du film
+ * @param {int} note Optionnel - Nouvelle note du film
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du film corrigé
+ */
 app.patch('/films/:id', upload.fields([]), (req, res) => {
   // corrige un champ d'un film
   services.patchFilm(req.body, req.params.id)
   .then(results => {
+    res.header('Content-Type', 'application/json')
     res.status(200).json(results)
   })
   .catch(err => {
     console.error(err)
-    res.status(500).send('Une Erreur est survenue')
+    res.header('Content-Type', 'text/html')
+    res.status(422).send('Une Erreur est survenue')
   })
 })
 
@@ -142,13 +167,16 @@ app.patch('/films/:id', upload.fields([]), (req, res) => {
  * @returns Objet contenant les détails du film supprimé
  */
 app.delete('/films/:id', upload.fields([]), (req, res) => {
+  // supprime un film
   services.deleteFilm(req.params.id)
   .then(results => {
-    res.status(200).json(results)
+    res.header('Content-Type', 'application/json')
+    res.status(200).json(results);
   })
   .catch(err => {
-    console.error(err)
-    res.status(500).send('Une Erreur est survenue')
+    console.log(err)
+    res.header('Content-Type', 'text/html')
+    res.status(422).send('Une Erreur est survenue')
   })
 })
 

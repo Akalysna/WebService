@@ -13,11 +13,14 @@ Pour lancer le service
 Le service écoute sur le port 3000 (http://localhost:3000)
 
 # Nodejs
-Les données dans le body sont transimit sous forme de form-data et non en JSON 
+Les paramètres de body lors des requêtes POST, PUT, et PATCH sont transmisent sous forme de multipart/form-data et non en application.json
 
 ## Swagger 
-La documentation swagger ce trouve à l'url suivante : http://localhost:3000/api-docs
+La documentation swagger se trouve à l'url suivante : http://localhost:3000/api-docs
 
 # Utilisation des fichiers
-## App.js
+## app.js
 Le fichier app.js initialise le server et défini les routes utilisés
+
+## services.js
+Le fichier services.js gère l'ensemble des méthodes requisent pour communiquer avec la base de données
