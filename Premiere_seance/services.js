@@ -94,10 +94,13 @@ export default {
       let params = []
 
       // La requête est construite en bouclant sur les clées du body, puisqu'elles sont égale au champs de la table
-      for (const [key, value] of Object.entries(body)) {
+      Object.keys(body).forEach(key => {
+        if(key == "id_film") {
+          return;
+        }
         params.push(value)
         query += `${key}=?, `
-      }
+      })
 
       //Suppression de la virgule en trop et complétion de la requête
       query = query.slice(0, query.length - 2)
