@@ -1,6 +1,7 @@
 //Définition des fonction
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
+import util from 'node:util'
 dotenv.config();
 
 const connection = mysql.createConnection({
@@ -138,25 +139,23 @@ export default {
         })
       }
 
-      /**Requête MQL */
-      let query = "UPDATE `films` SET "
-
       /**Paramètres de la requête */
       let params = []
-
+      let queryStr = []
+      
       // La requête est construite en bouclant sur les clées du body, puisqu'elles sont égale au champs de la table
       Object.keys(body).forEach(key => {
         if (key == "id_film") {
           return;
         }
         params.push(body[key])
-        query += `${key}=?, `
+        queryStr.push(`${key}=?`)
       })
 
-      //Suppression de la virgule en trop et complétion de la requête
-      query = query.slice(0, query.length - 2)
-      query += " WHERE `id_film` = ?"
       params.push(id) //Ajout de l'id du film
+      
+      /**Requête MQL */
+      let query = util.format("UPDATE `films` SET %s WHERE `id_film` = ?", queryStr.join())
 
       //Récupération du résultat de la requête
       connection.query(query, params, (err, results) => {
