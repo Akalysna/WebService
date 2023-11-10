@@ -66,13 +66,21 @@ export default {
       })
     })
   },
-  updateFilm(body) {
-    
-  },
-  patchFilm(body) {
+  updateFilm(body, id) {
 
   },
-  deleteFilm(body) {
+  patchFilm(body, id) {
+    return new Promise((resolve, reject) => {
+      let query = "UPDATE films SET ";
+      let params = [];
+      Object.keys(body).forEach(key => {
+        query += key+"=? ";
+        params.push(body[key]);
+      })
+
+    })
+  },
+  deleteFilm(body, id) {
 
   }
 }
