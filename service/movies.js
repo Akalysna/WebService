@@ -55,7 +55,6 @@ export default {
   },
 
   insertFilm(body, files) {
-    console.log(files.affiche[0])
     return new Promise((resolve, reject) => {
       let query = "INSERT INTO `movies`(`title`, `description`, `release_date`, `note`, `poster`) VALUES (?,?,?,?,?)";
       const params = [
@@ -63,7 +62,7 @@ export default {
         body.description ?? '',
         body.release_date ?? new Date().toISOString(),
         body.note ?? 0,
-        files.affiche[0].filename ? "http://localhost:3000/uploads/"+ files.affiche[0].filename : null
+        files.poster[0].filename ? "http://localhost:3000/uploads/"+ files.poster[0].filename : null
       ];
       connection.query(query, params, (err, results) => {
         if (!err) {
