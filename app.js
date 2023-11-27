@@ -6,7 +6,7 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 
 import moviesCtrl from "./controllers/movies.js"
-import moviesCtrl from "./controllers/categories.js"
+import categoryCtrl from "./controllers/categories.js"
 
 
 const app = express();
