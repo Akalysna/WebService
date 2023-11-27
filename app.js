@@ -49,11 +49,11 @@ expressSwagger(options)
 
 /**
  * Cette route retourne la liste des films de la base de données
- * @route GET /films
+ * @route GET /movies
  * @group Film - Opération à propos des films
  * @returns Liste des films
  */
-app.get('/films', (req, res) => {
+app.get('/movies', (req, res) => {
   services.getEveryFilms(req.query.limit, req.query.offset).then(results => {
     res.header('Content-Type', 'application/json')
     res.status(200).json(results)
@@ -65,29 +65,42 @@ app.get('/films', (req, res) => {
   })
 })
 
-app.get('/films', upload.fields([]), (req, res) => {
-
-  services.listMovies(req.params.limit, req.params.offset).then(results => {
-    res.header('Content-Type', 'application/json')
-    res.status(200).json(results)
-  })
-  .catch(err => {
-    console.error(err)
-    res.header('Content-Type', 'text/html')
-    res.status(404).send('Une Erreur est survenueeee')
-  })
-})
-
 /**
  * Cette route retourne un film selon l'id spécifié
- * @route GET /films/:id
+ * @route GET /movies/:id
  * @param {int} id Id du film a récupérer
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film
  */
-app.get('/films/:id', (req, res) => {
+app.get('/movies/:uid', (req, res) => {
   // query le film d'id :id
-  services.getSingleFilm(req.params.id).then(results => {
+  services.getSingleFilm(req.params.uid).then(results => {
+    if(results == {}) {
+      res.sendStatus(404)
+    }
+    else {
+      res.header('Content-Type', 'application/json')
+      res.status(200).json(results)
+    }
+  })
+  .catch(err => {
+    console.error(err)
+    res.header('Content-Type', 'text/html')
+    res.status(422).send('Une Erreur est survenue')
+  })
+})
+
+
+/**
+ * Cette route retourne les catégories d'un film selon l'id spécifié
+ * @route GET /movies/:id
+ * @param {int} id Id du film a récupérer
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du film
+ */
+app.get('/movies/:uid/categories', (req, res) => {
+  // query le film d'id :id
+  services.getCategoriesOfMovie(req.params.uid).then(results => {
     if(results == {}) {
       res.sendStatus(404)
     }
@@ -105,7 +118,7 @@ app.get('/films/:id', (req, res) => {
 
 /**
  * Cette route insère un film avec les données fournies
- * @route POST /films
+ * @route POST /movies
  * @param {string} title Titre du film
  * @param {string} description Description du film a insérer
  * @param {string} release_date Date de parution du film a insérer
@@ -113,7 +126,7 @@ app.get('/films/:id', (req, res) => {
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film inséré
  */
-app.post('/films', upload.fields([]), (req, res) => {
+app.post('/movies', upload.fields([]), (req, res) => {
   // ajoute un film
   services.insertFilm(req.body).then(results => {
     res.header('Content-Type', 'application/json')
@@ -128,7 +141,7 @@ app.post('/films', upload.fields([]), (req, res) => {
 
 /**
  * Cette route écrase un film avec les données fournies
- * @route PUT /films/:id
+ * @route PUT /movies/:id
  * @param {int} id Id du film a écraser
  * @param {string} title Nouveau titre du film
  * @param {string} description Nouvelle Description du film
@@ -137,9 +150,9 @@ app.post('/films', upload.fields([]), (req, res) => {
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film écrasé
  */
-app.put('/films/:id', upload.fields([]), (req, res) => {
+app.put('/movies/:uid', upload.fields([]), (req, res) => {
   // ecrase un film
-  services.updateFilm(req.body, req.params.id)
+  services.updateFilm(req.body, req.params.uid)
   .then(results => {
     res.status(200).json(results)
   })
@@ -151,7 +164,7 @@ app.put('/films/:id', upload.fields([]), (req, res) => {
 
 /**
  * Cette route corrige un film avec les données fournies
- * @route PATCH /films/:id
+ * @route PATCH /movies/:id
  * @param {int} id Id du film a corriger
  * @param {string} title Optionnel - Nouveau titre du film
  * @param {string} description Optionnel - Nouvelle Description du film
@@ -160,9 +173,9 @@ app.put('/films/:id', upload.fields([]), (req, res) => {
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film corrigé
  */
-app.patch('/films/:id', upload.fields([]), (req, res) => {
+app.patch('/movies/:uid', upload.fields([]), (req, res) => {
   // corrige un champ d'un film
-  services.patchFilm(req.body, req.params.id)
+  services.patchFilm(req.body, req.params.uid)
   .then(results => {
     res.header('Content-Type', 'application/json')
     res.status(200).json(results)
@@ -176,14 +189,14 @@ app.patch('/films/:id', upload.fields([]), (req, res) => {
 
 /**
  * Cette route supprime un film selon l'id fourni
- * @route DELETE /films/:id
+ * @route DELETE /movies/:id
  * @param {int} id Id du film a corriger
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film supprimé
  */
-app.delete('/films/:id', upload.fields([]), (req, res) => {
+app.delete('/movies/:uid', upload.fields([]), (req, res) => {
   // supprime un film
-  services.deleteFilm(req.params.id)
+  services.deleteFilm(req.params.uid)
   .then(results => {
     res.header('Content-Type', 'application/json')
     res.status(200).json(results);

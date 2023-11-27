@@ -43,10 +43,10 @@ export default {
     })
   },
 
-  getSingleFilm(id) {
+  getSingleFilm(uid) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM films WHERE id_film = ?;";
-      connection.query(query, [id], (err, results) => {
+      const query = "SELECT * FROM movies WHERE id_movies = ?;";
+      connection.query(query, [uid], (err, results) => {
         if (!err) {
           resolve(results[0]);
         }
@@ -62,7 +62,7 @@ export default {
 
   insertFilm(body) {
     return new Promise((resolve, reject) => {
-      let query = "INSERT INTO `films`(`title`, `description`, `release_date`, `note`) VALUES (?,?,?,?)";
+      let query = "INSERT INTO `movies`(`title`, `description`, `release_date`, `note`) VALUES (?,?,?,?)";
       const params = [
         body.title ?? '',
         body.description ?? '',
@@ -73,10 +73,10 @@ export default {
         if (!err) {
 
           //Récupération de l'id du dernier film inséré
-          query = "SELECT LAST_INSERT_id() as id;";
+          query = "SELECT LAST_INSERT_id() as uid;";
           connection.query(query, (err, results) => {
             if (!err) {
-              this.getSingleFilm(results[0].id).then(results => {
+              this.getSingleFilm(results[0].uid).then(results => {
                 resolve(results)
               })
                 .catch(err => {
@@ -101,12 +101,12 @@ export default {
     })
   },
 
-  updateFilm(body, id) {
+  updateFilm(body, uid) {
 
     return new Promise((resolve, reject) => {
 
       /**Requête SQL */
-      let query = "UPDATE `films` SET `title`= ?,`description`= ?,`release_date`= ?,`note`= ? WHERE `id_film`= ?"
+      let query = "UPDATE `movies` SET `title`= ?,`description`= ?,`release_date`= ?,`note`= ? WHERE `id_movies`= ?"
 
       /**Paramètres de la requête */
       const params = [
@@ -114,7 +114,7 @@ export default {
         body.description ?? '',
         body.release_date ?? new Date().toISOString(),
         body.note ?? 0,
-        id
+        uid
       ];
 
       connection.query(query, params, (err, results) => {
@@ -122,7 +122,7 @@ export default {
         //Retour de la nouvelle valeur du film
         if (!err) {
 
-          this.getSingleFilm(id).then((result) => {
+          this.getSingleFilm(uid).then((result) => {
             resolve(result)
 
           }).catch((err) => {
@@ -142,7 +142,7 @@ export default {
     })
   },
 
-  patchFilm(body, id) {
+  patchFilm(body, uid) {
     return new Promise((resolve, reject) => {
 
       //Vérifier que le body est défini
@@ -159,24 +159,24 @@ export default {
 
       // La requête est construite en bouclant sur les clées du body, puisqu'elles sont égale au champs de la table
       Object.keys(body).forEach(key => {
-        if (key == "id_film") {
+        if (key == "id_movies") {
           return;
         }
         params.push(body[key])
         queryStr.push(`${key}=?`)
       })
 
-      params.push(id) //Ajout de l'id du film
-
-      /**Requête MQL */
-      let query = util.format("UPDATE `films` SET %s WHERE `id_film` = ?", queryStr.join())
+      params.push(uid) //Ajout de l'id du film
+      
+      /**Requête SQL */
+      let query = util.format("UPDATE `movies` SET %s WHERE `id_movies` = ?", queryStr.join())
 
       //Récupération du résultat de la requête
       connection.query(query, params, (err, results) => {
 
         //S'il n'y a pas d'erreur renvoyer le film en question
         if (!err) {
-          this.getSingleFilm(id).then(results => {
+          this.getSingleFilm(uid).then(results => {
             resolve(results)
 
           }).catch(err => {
@@ -194,23 +194,20 @@ export default {
       })
     })
   },
-
-  deleteFilm(id) {
+  
+  deleteFilm(uid) {
     return new Promise((resolve, reject) => {
 
-      let query = "DELETE FROM `films` WHERE `id_film` = ?"
-      let params = [id]
+      let query = "DELETE FROM `movies` WHERE `id_movies` = ?"
+      let params = [uid]
 
-      let res = ""
 
-      this.getSingleFilm(id).then(results => {
+      this.getSingleFilm(uid).then(results => {
 
-        res = results
-
-        connection.query(query, params, (err, results) => {
+        connection.query(query, params, (err, results1) => {
 
           if (!err) {
-            resolve(res)
+            resolve(results)
           } else {
             reject({
               status: 422,
@@ -227,5 +224,18 @@ export default {
       })
     })
   },
-
+  getCategoriesOfMovie(uid) {
+    return new Promise((resolve, reject) => {
+      let query = "SELECT movies.`uid` as movie_id, categories.uid AS category_id, categories.name FROM `movies` LEFT JOIN categoriser ON categoriser.id_movies = movies.id_movies LEFT JOIN categories ON categories.id_categories = categoriser.id_categories WHERE movies.uid = ?;";
+      let params = [uid];
+      connection.query(query, params, (err, results) => {
+        if(!err) {
+          resolve(results);
+        }
+        else {
+          reject(err);
+        }
+      })
+    })
+  }
 }
