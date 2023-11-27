@@ -62,7 +62,7 @@ export default {
         body.description ?? '',
         body.release_date ?? new Date().toISOString(),
         body.note ?? 0,
-        files.poster[0].filename ? "http://localhost:3000/uploads/"+ files.poster[0].filename : null
+        files?.poster?.[0].filename ? "http://localhost:3000/uploads/"+ files.poster[0].filename : null
       ];
       connection.query(query, params, (err, results) => {
         if (!err) {

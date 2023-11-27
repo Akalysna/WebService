@@ -19,7 +19,6 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    console.log(file)
     cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
   },
 });
@@ -93,7 +92,7 @@ app.get('/movies/:uid/categories', moviesCtrl.getCategoriesOfMovie)
  * @param {string} description Description du film a insérer
  * @param {string} release_date Date de parution du film a insérer
  * @param {int} note note / 5 du film a insérer
- * @param {int} poster note / 5 du film a insérer
+ * @param {int} poster image png/jpeg en guise de poster du film
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film inséré
  */
