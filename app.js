@@ -54,7 +54,7 @@ expressSwagger(options)
  * @returns Liste des films
  */
 app.get('/films', (req, res) => {
-  services.getEveryFilms().then(results => {
+  services.getEveryFilms(req.query.limit, req.query.offset).then(results => {
     res.header('Content-Type', 'application/json')
     res.status(200).json(results)
   })
@@ -62,6 +62,19 @@ app.get('/films', (req, res) => {
     console.error(err)
     res.header('Content-Type', 'text/html')
     res.status(404).send('Une Erreur est survenue')
+  })
+})
+
+app.get('/films', upload.fields([]), (req, res) => {
+
+  services.listMovies(req.params.limit, req.params.offset).then(results => {
+    res.header('Content-Type', 'application/json')
+    res.status(200).json(results)
+  })
+  .catch(err => {
+    console.error(err)
+    res.header('Content-Type', 'text/html')
+    res.status(404).send('Une Erreur est survenueeee')
   })
 })
 
@@ -181,5 +194,7 @@ app.delete('/films/:id', upload.fields([]), (req, res) => {
     res.status(422).send('Une Erreur est survenue')
   })
 })
+
+
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));

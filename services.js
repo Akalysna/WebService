@@ -2,6 +2,8 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 import util from 'node:util'
+import { resolve } from 'node:path';
+import { rejects } from 'node:assert';
 dotenv.config();
 
 const connection = mysql.createConnection({
@@ -12,17 +14,29 @@ const connection = mysql.createConnection({
 });
 
 export default {
-  getEveryFilms() {
+
+  getEveryFilms(limit, offset) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM films;";
-      connection.query(query, (err, results) => {
+
+      let pagination = ""
+      let params = []
+
+      if (limit || offset) {
+        pagination = "LIMIT ? OFFSET ?"
+        params.push(limit ? Number(limit) : 10)
+        params.push(offset ? Number(offset) : 0)
+      }
+
+      const query = util.format("SELECT * FROM movies %s;", pagination)
+
+      connection.query(query, params, (err, results) => {
         if (!err) {
           resolve(results);
         }
         else {
           reject({
-            status : 422,
-            err : err
+            status: 422,
+            err: err
           });
         }
       })
@@ -38,8 +52,8 @@ export default {
         }
         else {
           reject({
-            status : 422,
-            err : err
+            status: 422,
+            err: err
           });
         }
       })
@@ -71,16 +85,16 @@ export default {
             }
             else {
               reject({
-                status : 422,
-                err : err
+                status: 422,
+                err: err
               });
             }
           })
         }
         else {
           reject({
-            status : 422,
-            err : err
+            status: 422,
+            err: err
           });
         }
       })
@@ -106,23 +120,23 @@ export default {
       connection.query(query, params, (err, results) => {
 
         //Retour de la nouvelle valeur du film
-        if (!err){
+        if (!err) {
 
           this.getSingleFilm(id).then((result) => {
             resolve(result)
-            
+
           }).catch((err) => {
             reject({
-              status : 422,
-              err : err
+              status: 422,
+              err: err
             })
           })
         }
 
         else
           reject({
-            status : 422,
-            err : err
+            status: 422,
+            err: err
           })
       })
     })
@@ -132,17 +146,17 @@ export default {
     return new Promise((resolve, reject) => {
 
       //Vérifier que le body est défini
-      if(!body){
+      if (!body) {
         reject({
-          status : 422,
-          err : "Le body est undefined. Veuillez remplir les champs et relancer la requête"
+          status: 422,
+          err: "Le body est undefined. Veuillez remplir les champs et relancer la requête"
         })
       }
 
       /**Paramètres de la requête */
       let params = []
       let queryStr = []
-      
+
       // La requête est construite en bouclant sur les clées du body, puisqu'elles sont égale au champs de la table
       Object.keys(body).forEach(key => {
         if (key == "id_film") {
@@ -153,7 +167,7 @@ export default {
       })
 
       params.push(id) //Ajout de l'id du film
-      
+
       /**Requête MQL */
       let query = util.format("UPDATE `films` SET %s WHERE `id_film` = ?", queryStr.join())
 
@@ -165,22 +179,22 @@ export default {
           this.getSingleFilm(id).then(results => {
             resolve(results)
 
-          }).catch(err => { 
+          }).catch(err => {
             reject({
-              status : 422,
-              err : err
+              status: 422,
+              err: err
             })
           })
         } else {
           reject({
-            status : 422,
-            err : err
+            status: 422,
+            err: err
           })
         }
       })
     })
   },
-  
+
   deleteFilm(id) {
     return new Promise((resolve, reject) => {
 
@@ -199,18 +213,19 @@ export default {
             resolve(res)
           } else {
             reject({
-              status : 422,
-              err : err
+              status: 422,
+              err: err
             })
           }
         })
 
       }).catch(err => {
         reject({
-          status : 422,
-          err : err
+          status: 422,
+          err: err
         })
       })
     })
-  }
+  },
+
 }
