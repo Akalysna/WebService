@@ -6,7 +6,7 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 
 import moviesCtrl from "./controllers/movies.js"
-import categoryCtrl from "./controllers/categories.js"
+import categoriesCtrl from "./controllers/categories.js"
 
 
 const app = express();
@@ -155,7 +155,7 @@ app.get('/categories', categoriesCtrl.getCategories)
  * @group Categories - Opération à propos des categories
  * @returns Objet contenant les détails de la catégorie
  */
-app.get('/categories/:uid', categoriesCtrl.getSingleCategories)
+app.get('/categories/:uid', categoriesCtrl.getSingleCategory)
 
 /**
  * Cette route supprime un film selon l'id fourni
@@ -164,7 +164,7 @@ app.get('/categories/:uid', categoriesCtrl.getSingleCategories)
  * @group Categories - Opération à propos des categories
  * @returns Objet contenant les films de la catégorie
  */
-app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategories)
+app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategory)
 
 /**
  * Cette route ajoute une catégorie

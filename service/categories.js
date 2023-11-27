@@ -1,6 +1,5 @@
 import { connection } from "../database/db.js"
 import util from 'node:util'
-import movies from "./movies.js"
 import { rejects } from "node:assert"
 
 export default {
@@ -209,7 +208,7 @@ export default {
         })
     },
 
-    getMoviesOfCategorie(uid) {
+    getMoviesOfCategory(uid) {
         return new Promise((resolve, reject) => {
             let query = "SELECT movies.`uid` AS movie_id, categories.uid AS category_id, movies.title FROM `categories` LEFT JOIN categoriser ON categoriser.id_movies = movies.id_movies LEFT JOIN categories ON categories.id_categories = categoriser.id_categories WHERE categories.uid = ?;"
             let params = [uid];
@@ -222,44 +221,5 @@ export default {
                 }
             })
         })
-    },
-
-    addMovieCategory(uidMov, uidCat) {
-        return new Promise((resolve, reject) => {
-
-            //Vérifier que les ressources existent
-            movies.getSingleMovie(uidMov).then(movieResults => {
-
-                this.getSingleCategory(uidCat).then(categoryResults => {
-                    
-                    
-                    let params = [categoryResults.id_categories, movieResults.id_movies]
-                    let query = "INSERT INTO `categoriser`(`id_categories`, `id_movies`) VALUES (?, ?)"
-
-                    connection.query(query, params, (err, results => {
-
-                    }))
-
-
-                }).catch(err => {
-                    reject({
-                        status: 422,
-                        err: err
-                    })
-                })
-
-            }).catch(err => {
-                reject({
-                    status: 422,
-                    err: err
-                })
-            })
-
-        })
-
-    },
-
-    removeMovieCategory(uidMov, uidCat) {
-
     }
 }
