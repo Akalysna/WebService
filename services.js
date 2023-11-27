@@ -152,7 +152,7 @@ export default {
         queryStr.push(`${key}=?`)
       })
 
-      params.push(id) //Ajout de l'id du film
+      params.push(uid) //Ajout de l'id du film
       
       /**Requête SQL */
       let query = util.format("UPDATE `movies` SET %s WHERE `id_movies` = ?", queryStr.join())
