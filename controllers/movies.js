@@ -51,7 +51,7 @@ export default {
 
   insertFilm: (req, res) => {
     // ajoute un film
-    Service.insertFilm(req.body).then(results => {
+    Service.insertFilm(req.body, req.files).then(results => {
       res.header('Content-Type', 'application/json')
       res.status(201).json(results)
     })
@@ -95,6 +95,30 @@ export default {
         res.header('Content-Type', 'application/json')
         res.status(200).json(results);
       })
+      .catch(err => {
+        console.log(err)
+        res.header('Content-Type', 'text/html')
+        res.status(422).send('Une Erreur est survenue')
+      })
+  },
+  addMovieCategory: (req, res) => {
+    Service.addMovieCategory(req.params.uidMov, req.params.uidCat).then(results => {
+      res.header('Content-Type', 'application/json')
+      res.status(201).json(results)
+    })
+      .catch(err => {
+        console.log(err)
+        res.header('Content-Type', 'text/html')
+        res.status(422).send('Une Erreur est survenue')
+      })
+
+  },
+
+  removeMovieCategory: (req, res) => {
+    Service.removeMovieCategory(req.params.uidMov, req.params.uidCat).then(results => {
+      res.header('Content-Type', 'application/json')
+      res.status(200).json(results);
+    })
       .catch(err => {
         console.log(err)
         res.header('Content-Type', 'text/html')

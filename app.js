@@ -6,13 +6,26 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 
 import moviesCtrl from "./controllers/movies.js"
-import categoryCtrl from "./controllers/categories.js"
+import categoriesCtrl from "./controllers/categories.js"
 
 
 const app = express();
 app.use(cors());
 
-const upload = multer()
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    if(file.mimetype == 'image/png' || file.mimetype == 'image/jpeg') {
+      cb(null, 'uploads/');
+    }
+  },
+  filename: (req, file, cb) => {
+    console.log(file)
+    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+  },
+});
+
+
+const upload = multer({ storage: storage });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -83,7 +96,7 @@ app.get('/movies/:uid/categories', moviesCtrl.getCategoriesOfMovie)
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film inséré
  */
-app.post('/movies', upload.fields([]), moviesCtrl.insertFilm)
+app.post('/movies', upload.fields([{name:'affiche', type: 'file'}]), moviesCtrl.insertFilm)
 
 /**
  * Cette route écrase un film avec les données fournies
@@ -155,7 +168,7 @@ app.get('/categories', categoriesCtrl.getCategories)
  * @group Categories - Opération à propos des categories
  * @returns Objet contenant les détails de la catégorie
  */
-app.get('/categories/:uid', categoriesCtrl.getSingleCategories)
+app.get('/categories/:uid', categoriesCtrl.getSingleCategory)
 
 /**
  * Cette route supprime un film selon l'id fourni
@@ -164,7 +177,7 @@ app.get('/categories/:uid', categoriesCtrl.getSingleCategories)
  * @group Categories - Opération à propos des categories
  * @returns Objet contenant les films de la catégorie
  */
-app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategories)
+app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategorie)
 
 /**
  * Cette route ajoute une catégorie

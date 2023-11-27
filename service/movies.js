@@ -1,6 +1,11 @@
 //Définition des fonction
 import { connection } from "../database/db.js"
 import util from 'node:util'
+import path from 'path'
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
 
@@ -34,7 +39,7 @@ export default {
 
   getSingleMovie(uid) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM movies WHERE uid = ?;";
+      const query = "SELECT `title`, `uid`, `description`, `release_date`, `note`, `poster` FROM movies WHERE uid = ?;";
       connection.query(query, [uid], (err, results) => {
         if (!err) {
           resolve(results[0]);
@@ -49,14 +54,16 @@ export default {
     })
   },
 
-  insertFilm(body) {
+  insertFilm(body, files) {
+    console.log(files.affiche[0])
     return new Promise((resolve, reject) => {
-      let query = "INSERT INTO `movies`(`title`, `description`, `release_date`, `note`) VALUES (?,?,?,?)";
+      let query = "INSERT INTO `movies`(`title`, `description`, `release_date`, `note`, `poster`) VALUES (?,?,?,?,?)";
       const params = [
         body.title ?? '',
         body.description ?? '',
         body.release_date ?? new Date().toISOString(),
-        body.note ?? 0
+        body.note ?? 0,
+        files.affiche[0].filename ? "http://localhost:3000/uploads/"+ files.affiche[0].filename : null
       ];
       connection.query(query, params, (err, results) => {
         if (!err) {
@@ -65,7 +72,7 @@ export default {
           query = "SELECT uid FROM movies WHERE id_movies = (SELECT LAST_INSERT_ID());";
           connection.query(query, (err, results) => {
             if (!err) {
-              this.getSingleFilm(results[0].uid).then(results => {
+              this.getSingleMovie(results[0].uid).then(results => {
                 resolve(results)
               })
                 .catch(err => {
@@ -111,7 +118,7 @@ export default {
         //Retour de la nouvelle valeur du film
         if (!err) {
 
-          this.getSingleFilm(uid).then((result) => {
+          this.getSingleMovie(uid).then((result) => {
             resolve(result)
 
           }).catch((err) => {
@@ -165,7 +172,7 @@ export default {
 
         //S'il n'y a pas d'erreur renvoyer le film en question
         if (!err) {
-          this.getSingleFilm(uid).then(results => {
+          this.getSingleMovie(uid).then(results => {
             resolve(results)
 
           }).catch(err => {
@@ -191,7 +198,7 @@ export default {
       let params = [uid]
 
 
-      this.getSingleFilm(uid).then(results => {
+      this.getSingleMovie(uid).then(results => {
 
         connection.query(query, params, (err, results1) => {
 
@@ -226,5 +233,40 @@ export default {
         }
       })
     })
+  },
+  addMovieCategory(uidMov, uidCat) {
+    return new Promise((resolve, reject) => {
+
+      //Vérifier que les ressources existent
+      movies.getSingleMovie(uidMov).then(movieResults => {
+
+        this.getSingleCategory(uidCat).then(categoryResults => {
+
+
+          let params = [categoryResults.id_categories, movieResults.id_movies]
+          let query = "INSERT INTO `categoriser`(`id_categories`, `id_movies`) VALUES (?, ?)"
+
+          connection.query(query, params, (err, results => {
+
+          }))
+        }).catch(err => {
+          reject({
+            status: 422,
+            err: err
+          })
+        })
+      }).catch(err => {
+        reject({
+          status: 422,
+          err: err
+        })
+      })
+
+    })
+
+  },
+
+  removeMovieCategory(uidMov, uidCat) {
+
   }
 }
