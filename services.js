@@ -62,7 +62,7 @@ export default {
           query = "SELECT LAST_INSERT_id() as uid;";
           connection.query(query, (err, results) => {
             if (!err) {
-              this.getSingleFilm(results[0].id).then(results => {
+              this.getSingleFilm(results[0].uid).then(results => {
                 resolve(results)
               })
                 .catch(err => {
@@ -100,7 +100,7 @@ export default {
         body.description ?? '',
         body.release_date ?? new Date().toISOString(),
         body.note ?? 0,
-        id
+        uid
       ];
 
       connection.query(query, params, (err, results) => {
