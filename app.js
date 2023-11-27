@@ -6,6 +6,7 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 
 import moviesCtrl from "./controllers/movies.js"
+import moviesCtrl from "./controllers/categories.js"
 
 
 const app = express();
@@ -113,10 +114,91 @@ app.patch('/movies/:uid', upload.fields([]), moviesCtrl.patchFilm)
 /**
  * Cette route supprime un film selon l'id fourni
  * @route DELETE /movies/:id
- * @param {int} id Id du film a corriger
+ * @param {int} id Id du film a supprimer
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film supprimé
  */
 app.delete('/movies/:uid', upload.fields([]), moviesCtrl.deleteFilm)
+
+/**
+ * Cette route affecte un film a une catégorie selon les ids fournis
+ * @route POST /movies/:uidMov/category/:uidCat
+ * @param {int} uidMov Id du film à affecter
+ * @param {int} uidCat Id de la categorie à corriger
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du film affecté
+ */
+app.post('/movies/:uidMov/category/:uidCat', upload.fields([]), moviesCtrl.addMovieCategory)
+
+/**
+ * Cette route supprime l'affectation d'un film a une catégorie
+ * @route DELETE /movies/:uidMov/category/:uidCat
+ * @param {int} uidMov Id du film à affecter
+ * @param {int} uidCat Id de la categorie à corriger
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du film désaffecté
+ */
+app.delete('/movies/:uidMov/category/:uidCat', upload.fields([]), moviesCtrl.removeMovieCategory)
+
+/**
+ * Cette route récupère
+ * @route GET /categories
+ * @group Categories - Opération à propos des categories
+ * @returns Liste des Catégories
+ */
+app.get('/categories', categoriesCtrl.getCategories)
+
+/**
+ * Cette route supprime un film selon l'id fourni
+ * @route GET /categories/:id
+ * @param {int} id Id du film a corriger
+ * @group Categories - Opération à propos des categories
+ * @returns Objet contenant les détails de la catégorie
+ */
+app.get('/categories/:uid', categoriesCtrl.getSingleCategories)
+
+/**
+ * Cette route supprime un film selon l'id fourni
+ * @route GET /categories/:id/movies
+ * @param {int} uid Id de la catégorie à lire
+ * @group Categories - Opération à propos des categories
+ * @returns Objet contenant les films de la catégorie
+ */
+app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategories)
+
+/**
+ * Cette route ajoute une catégorie
+ * @route POST /categories
+ * @group Categories - Opération à propos des categories
+ * @returns Objet contenant les détails de la catégorie insérée
+ */
+app.post('/categories', upload.fields([]), categoriesCtrl.insertCategory)
+
+/**
+ * Cette route supprime un film selon l'id fourni
+ * @route PUT /categories/:id
+ * @param {int} uid Id de la catégorie à modifier
+ * @group Categories - Opération à propos des categories
+ * @returns Objet contenant les détails de la catégorie modifiée
+ */
+app.put('/categories/:uid', upload.fields([]), categoriesCtrl.updateCategory)
+
+/**
+ * Cette route supprime un film selon l'id fourni
+ * @route PATCH /categories/:id
+ * @param {int} uid Id de la catégorie à corriger
+ * @group Categories - Opération à propos des categories
+ * @returns Objet contenant les détails de la catégorie corrigée
+ */
+app.patch('/categories/:uid', upload.fields([]), categoriesCtrl.patchCategory)
+
+/**
+ * Cette route supprime un film selon l'id fourni
+ * @route DELETE /categories/:id
+ * @param {int} id Id de la catégorie à supprimer
+ * @group Categories - Opération à propos des categories
+ * @returns Objet contenant les détails de la catégorie supprimé
+ */
+app.delete('/categories/:uid', upload.fields([]), categoriesCtrl.deleteCategory)
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));

@@ -62,7 +62,7 @@ export default {
         if (!err) {
 
           //Récupération de l'id du dernier film inséré
-          query = "SELECT LAST_INSERT_id() as uid;";
+          query = "SELECT uid FROM movies WHERE id_movies = (SELECT LAST_INSERT_ID());";
           connection.query(query, (err, results) => {
             if (!err) {
               this.getSingleFilm(results[0].uid).then(results => {
