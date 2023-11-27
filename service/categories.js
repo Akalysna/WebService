@@ -1,6 +1,5 @@
 import { connection } from "../database/db.js"
 import util from 'node:util'
-import movies from "./movies.js"
 import { rejects } from "node:assert"
 
 export default {
@@ -209,18 +208,18 @@ export default {
     })
   },
 
-  getMoviesOfCategorie(uid) {
-    return new Promise((resolve, reject) => {
-      let query = "SELECT movies.`uid` AS movie_id, categories.uid AS category_id, movies.title FROM `categories` LEFT JOIN categoriser ON categoriser.id_movies = movies.id_movies LEFT JOIN categories ON categories.id_categories = categoriser.id_categories WHERE categories.uid = ?;"
-      let params = [uid];
-      connection.query(query, params, (err, results) => {
-        if (!err) {
-          resolve(results);
-        }
-        else {
-          reject(err);
-        }
-      })
-    })
-  }
+    getMoviesOfCategory(uid) {
+        return new Promise((resolve, reject) => {
+            let query = "SELECT movies.`uid` AS movie_id, categories.uid AS category_id, movies.title FROM `categories` LEFT JOIN categoriser ON categoriser.id_movies = movies.id_movies LEFT JOIN categories ON categories.id_categories = categoriser.id_categories WHERE categories.uid = ?;"
+            let params = [uid];
+            connection.query(query, params, (err, results) => {
+                if (!err) {
+                    resolve(results);
+                }
+                else {
+                    reject(err);
+                }
+            })
+        })
+    }
 }

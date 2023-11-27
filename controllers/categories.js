@@ -86,9 +86,9 @@ export default {
     },
 
 
-    getMoviesOfCategorie: (req, res) => {
-
-        Service.getMoviesOfCategorie(req.params.uid).then(results => {
+    getMoviesOfCategory: (req, res) => {
+        
+        Service.getMoviesOfCategory(req.params.uid).then(results => {
             if (results == {}) {
                 res.sendStatus(404)
             }

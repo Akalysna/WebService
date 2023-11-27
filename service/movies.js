@@ -1,5 +1,6 @@
 //Définition des fonction
 import { connection } from "../database/db.js"
+import categories from "./categories.js"
 import util from 'node:util'
 import path from 'path'
 import { fileURLToPath } from 'url';
@@ -233,39 +234,119 @@ export default {
       })
     })
   },
+
   addMovieCategory(uidMov, uidCat) {
     return new Promise((resolve, reject) => {
 
       //Vérifier que les ressources existent
-      movies.getSingleMovie(uidMov).then(movieResults => {
+      this.getSingleMovie(uidMov).then(movieResults => {
 
-        this.getSingleCategory(uidCat).then(categoryResults => {
+        categories.getSingleCategory(uidCat).then(categoryResults => {
 
-
+          //Vérifier que le film n'a pas déjà la catégorie
           let params = [categoryResults.id_categories, movieResults.id_movies]
-          let query = "INSERT INTO `categoriser`(`id_categories`, `id_movies`) VALUES (?, ?)"
+          let query = "SELECT * FROM `categoriser` WHERE id_categories=? AND id_movies=?"
 
-          connection.query(query, params, (err, results => {
+          connection.query(query, params, (res, results) => {
 
-          }))
+            if (results.length != 0) {
+              reject({
+                status: 304,
+                err: "Erreur : Les deux UID sont déjà associés"
+              })
+
+            } else {
+
+              let query = "INSERT INTO `categoriser`(`id_categories`, `id_movies`) VALUES (?, ?)"
+
+              connection.query(query, params, (err, results) => {
+                if(!err){
+                  resolve({
+                    status: 201,
+                    err: "La catégorie a été ajouté au film"
+                  })
+                } else {
+                  reject({
+                    status: 422,
+                    err: err
+                  })
+                }
+              })
+            }
+          })
+
         }).catch(err => {
           reject({
             status: 422,
             err: err
           })
         })
+
       }).catch(err => {
         reject({
           status: 422,
           err: err
         })
       })
-
     })
-
   },
 
   removeMovieCategory(uidMov, uidCat) {
+
+    return new Promise((resolve, reject) => {
+
+      //Vérifier que les ressources existent
+      this.getSingleMovie(uidMov).then(movieResults => {
+
+        categories.getSingleCategory(uidCat).then(categoryResults => {
+
+          //Vérifier que le film n'a pas déjà la catégorie
+          let params = [categoryResults.id_categories, movieResults.id_movies]
+          let query = "SELECT * FROM `categoriser` WHERE id_categories=? AND id_movies=?"
+
+          connection.query(query, params, (res, results) => {
+
+            
+            if (results.length == 0) {
+              reject({
+                status: 304,
+                err: "Erreur : Les deux UID ne sont pas associés"
+              })
+
+            } else {
+
+              let query = "DELETE FROM `categoriser` WHERE id_categories=? AND id_movies=?"
+
+              connection.query(query, params, (err, results) => {
+                if(!err){
+                  resolve({
+                    status: 200,
+                    err: "La catégorie a été supprimé du film"
+                  })
+                } else {
+                  reject({
+                    status: 422,
+                    err: err
+                  })
+                }
+              })
+            }
+          })
+
+        }).catch(err => {
+          reject({
+            status: 422,
+            err: err
+          })
+        })
+
+      }).catch(err => {
+        reject({
+          status: 422,
+          err: err
+        })
+      })
+    })
 
   }
 }

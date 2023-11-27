@@ -177,7 +177,7 @@ app.get('/categories/:uid', categoriesCtrl.getSingleCategory)
  * @group Categories - Opération à propos des categories
  * @returns Objet contenant les films de la catégorie
  */
-app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategorie)
+app.get('/categories/:uid/movies', categoriesCtrl.getMoviesOfCategory)
 
 /**
  * Cette route ajoute une catégorie
