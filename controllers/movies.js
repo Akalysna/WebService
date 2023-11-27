@@ -5,6 +5,7 @@ export default {
   getMovies: (req, res) => {
     Service.getEveryMovies(req.query.limit, req.query.offset).then(results => {
       res.header('Content-Type', 'application/json')
+      res.header('Link', '<http://localhost:3000/movies/:uid>; rel="GetMovieDetail"')
       res.status(200).json(results)
     })
       .catch(err => {
@@ -21,6 +22,7 @@ export default {
       }
       else {
         res.header('Content-Type', 'application/json')
+        res.header('Link', '<http://localhost:3000/movies/'+req.params.uid+'/categories>; rel="GetMovieCategories"')
         res.status(200).json(results)
       }
     })
@@ -32,7 +34,6 @@ export default {
   },
 
   getCategoriesOfMovie: (req, res) => {
-    // query le film d'id :id
     Service.getCategoriesOfMovie(req.params.uid).then(results => {
       if (results == {}) {
         res.sendStatus(404)

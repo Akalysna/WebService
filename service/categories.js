@@ -36,7 +36,7 @@ export default {
 
   getSingleCategory(uid) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM categories WHERE uid = ?;";
+      const query = "SELECT `name`, `uid` FROM categories WHERE uid = ?;";
       connection.query(query, [uid], (err, results) => {
         if (!err) {
           resolve(results[0]);
