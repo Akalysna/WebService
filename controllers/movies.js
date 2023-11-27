@@ -51,7 +51,7 @@ export default {
 
   insertFilm: (req, res) => {
     // ajoute un film
-    Service.insertFilm(req.body).then(results => {
+    Service.insertFilm(req.body, req.files).then(results => {
       res.header('Content-Type', 'application/json')
       res.status(201).json(results)
     })
@@ -101,7 +101,6 @@ export default {
         res.status(422).send('Une Erreur est survenue')
       })
   },
-
 
   addMovieCategory: (req, res) => {
 
