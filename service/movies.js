@@ -16,7 +16,7 @@ export default {
         params.push(offset ? Number(offset) : 0)
       }
 
-      const query = util.format("SELECT * FROM movies %s;", pagination)
+      const query = util.format("SELECT `title`, `uid`, `description`, `release_date`, `note`, `poster` FROM movies %s;", pagination)
 
       connection.query(query, params, (err, results) => {
         if (!err) {
@@ -34,7 +34,7 @@ export default {
 
   getSingleMovie(uid) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM movies WHERE id_movies = ?;";
+      const query = "SELECT * FROM movies WHERE uid = ?;";
       connection.query(query, [uid], (err, results) => {
         if (!err) {
           resolve(results[0]);
@@ -95,7 +95,7 @@ export default {
     return new Promise((resolve, reject) => {
 
       /**Requête SQL */
-      let query = "UPDATE `movies` SET `title`= ?,`description`= ?,`release_date`= ?,`note`= ? WHERE `id_movies`= ?"
+      let query = "UPDATE `movies` SET `title`= ?,`description`= ?,`release_date`= ?,`note`= ? WHERE `uid`= ?"
 
       /**Paramètres de la requête */
       const params = [
@@ -158,7 +158,7 @@ export default {
       params.push(uid) //Ajout de l'id du film
 
       /**Requête SQL */
-      let query = util.format("UPDATE `movies` SET %s WHERE `id_movies` = ?", queryStr.join())
+      let query = util.format("UPDATE `movies` SET %s WHERE `uid` = ?", queryStr.join())
 
       //Récupération du résultat de la requête
       connection.query(query, params, (err, results) => {
@@ -187,7 +187,7 @@ export default {
   deleteFilm(uid) {
     return new Promise((resolve, reject) => {
 
-      let query = "DELETE FROM `movies` WHERE `id_movies` = ?"
+      let query = "DELETE FROM `movies` WHERE `uid` = ?"
       let params = [uid]
 
 
