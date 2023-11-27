@@ -6,6 +6,7 @@ import path from 'path'
 import { fileURLToPath } from 'url';
 
 import moviesCtrl from "./controllers/movies.js"
+import categoriesCtrl from "./controllers/categories.js"
 
 
 const app = express();
@@ -118,5 +119,15 @@ app.patch('/movies/:uid', upload.fields([]), moviesCtrl.patchFilm)
  * @returns Objet contenant les détails du film supprimé
  */
 app.delete('/movies/:uid', upload.fields([]), moviesCtrl.deleteFilm)
+
+/**
+ * Cette route affecte un film a une catégorie selon les ids fournis
+ * @route POST /movies/:uidMov/category/:uidCat
+ * @param {int} uidMov Id du film à affecter
+ * @param {int} uidCat Id de la categorie à corriger
+ * @group Film - Opération à propos des films
+ * @returns Objet contenant les détails du film affecté
+ */
+app.post('/movies/:uidMov/category/:uidCat', upload.fields([]), categoriesCtrl.addMovieCategory)
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));
