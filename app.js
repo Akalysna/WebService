@@ -58,6 +58,9 @@ let options = {
 };
 expressSwagger(options)
 
+app.get('/file',upload.fields([{name: 'poster', type: 'file'}]), (req, res) => {
+  console.log(req.body.poster);
+})
 
 /**
  * Cette route retourne la liste des films de la base de données
