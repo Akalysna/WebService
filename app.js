@@ -134,7 +134,7 @@ app.patch('/movies/:uid', upload.fields([]), moviesCtrl.patchFilm)
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film supprimé
  */
-app.delete('/movies/:uid', upload.fields([]), moviesCtrl.deleteFilm)
+app.delete('/movies/:uid', moviesCtrl.deleteFilm)
 
 /**
  * Cette route affecte un film a une catégorie selon les ids fournis
@@ -154,7 +154,7 @@ app.post('/movies/:uidMov/category/:uidCat', upload.fields([]), moviesCtrl.addMo
  * @group Film - Opération à propos des films
  * @returns Objet contenant les détails du film désaffecté
  */
-app.delete('/movies/:uidMov/category/:uidCat', upload.fields([]), moviesCtrl.removeMovieCategory)
+app.delete('/movies/:uidMov/category/:uidCat', moviesCtrl.removeMovieCategory)
 
 /**
  * Cette route récupère
@@ -215,6 +215,6 @@ app.patch('/categories/:uid', upload.fields([]), categoriesCtrl.patchCategory)
  * @group Categories - Opération à propos des categories
  * @returns Objet contenant les détails de la catégorie supprimé
  */
-app.delete('/categories/:uid', upload.fields([]), categoriesCtrl.deleteCategory)
+app.delete('/categories/:uid', categoriesCtrl.deleteCategory)
 
 app.listen(3000, () => console.log("WebService en écoute sur le port 3000"));

@@ -5,6 +5,7 @@ export default {
     getCategories: (req, res) => {
         Service.getCategories(req.query.limit, req.query.offset).then(results => {
             res.header('Content-Type', 'application/json')
+            res.header('Link', '<http://localhost:3000/categories/:uid>; rel="GetCategoryDetail"')
             res.status(200).json(results)
         })
             .catch(err => {
@@ -21,6 +22,7 @@ export default {
             }
             else {
                 res.header('Content-Type', 'application/json')
+                res.header('Link', '<http://localhost:3000/categories/'+req.params.uid+'/movies>; rel="GetMoviesOfCategory"')
                 res.status(200).json(results)
             }
         })
