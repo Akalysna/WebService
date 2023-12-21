@@ -1,4 +1,4 @@
-import Service from "../service/categories.js"
+import Service from "../services/categories.js"
 
 export default {
 

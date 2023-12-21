@@ -1,4 +1,4 @@
-import Service from "../service/movies.js"
+import Service from "../services/movies.js"
 
 export default {
 
