@@ -8,6 +8,8 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
+  container:
+    image: ghcr.io/akalysna/webservice:main
   server:
     build:
       context: .
